@@ -41,14 +41,15 @@ from tag import MyMp3
     
 #writeFiles(lines)
 
+TRACK = "%track"
+TITLE = "%title"
+ALBUM = "%album"
+ARTIST = "%artist"
+TAGDICT = {TRACK:tag.TRACK, TITLE:tag.TITLE, ALBUM:tag.ALBUM, ARTIST:tag.ARTIST}
+
 class TagDictBuilder:    
-    TRACK = "%track"
-    TITLE = "%title"
-    ALBUM = "%album"
-    ARTIST = "%artist"
     ITEMS = [TRACK, TITLE, ALBUM, ARTIST]
     REGEX = re.compile("(" + TRACK + ")|(" + TITLE + ")|(" + ALBUM + ")|(" + ARTIST  + ")")
-    DICT = {TRACK:tag.TRACK, TITLE:tag.TITLE, ALBUM:tag.ALBUM, ARTIST:tag.ARTIST}
     
     def __init__(self, regex):
         self.regex = self._buildRegex(regex)
@@ -68,7 +69,7 @@ class TagDictBuilder:
                 if currentMatch != "":
                     print currentMatch
                     print eaten
-                    result[TagDictBuilder.DICT[currentMatch]] = eaten[0]
+                    result[TAGDICT[currentMatch]] = eaten[0]
             filtered = filtered[1:]
         return result
                 
@@ -94,3 +95,19 @@ class TagWriter:
             
     def save(self):
         self.file.save()
+        
+class FileWriter:
+    def __init__(self, path, schema):
+        self.schema = schema
+        self.path = path
+        
+    def write(self,file):
+        pass
+        
+    def _translateSchema(self, file):
+        location = self.schema
+        for tag in TAGDICT:
+            location = location.replace(tag, file.getTag(TAGDICT[tag]))
+        return location
+            
+        
