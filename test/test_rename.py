@@ -152,6 +152,7 @@ class TestTagWriter:
 class TestFileWriter:
     def setup_method(self, method):
         self.fw = FileWriter("","%artist/%album/%track - %title", None)
+        self.fw2 = FileWriter("/path/to/something", "%artist - %album/%track - %title", None)
         self.rfile1 = MyMp3("mp3/test1.mp3")
         self.rfile2 = MyMp3("mp3/test2.mp3")
         
@@ -163,8 +164,19 @@ class TestFileWriter:
         schema = self.fw._translateSchema(self.rfile2)
         assert self.rfile2.artist() + "/" + self.rfile2.album() + "/" + self.rfile2.track() + " - " + self.rfile2.title() == schema
         
+    def test__getSource(self):
+        assert "mp3/test1.mp3" == self.fw._getSource(self.rfile1)
+        assert "mp3/test2.mp3" == self.fw._getSource(self.rfile2)
+        
+    def test__getDestination(self):
+        assert "artist1/album1/1 - title1.mp3" == self.fw._getDestination(self.rfile1)
+        assert "artist2/album2/2 - title2.mp3" == self.fw._getDestination(self.rfile2)
+        
+    def test__getDestination2(self):
+        assert "/path/to/something/artist1 - album1/1 - title1.mp3" == self.fw2._getDestination(self.rfile1)
+        assert "/path/to/something/artist2 - album2/2 - title2.mp3" == self.fw2._getDestination(self.rfile2)
+        
 class TestFileHandler:
-    
     def setup_method(self, method):
         self.fh = FileHandler()
         

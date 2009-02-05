@@ -123,7 +123,7 @@ class FileWriter:
         return file.fname
         
     def _getDestination(self, file):
-        return os.path.join(self.path,self._translateSchema(file)) + "." + self.file.extension
+        return os.path.join(self.path,self._translateSchema(file)) + "." + file.extension
         
     def _translateSchema(self, file):
         location = self.schema
