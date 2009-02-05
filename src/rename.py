@@ -85,18 +85,14 @@ class TagDictBuilder:
         
 
 class TagWriter:
-    def __init__(self, file, tagDict):
+    def __init__(self, file):
         self.file = file
-        self.tagDict = tagDict
-    
-    def run(self):
-        pass
-    
-    def _writeTags(self):
-        for tag in self.tagDict:
-            self.file.setTag(tag, self.tagDict[tag])
+        
+    def writeTags(self, tagDict):
+        for tag in tagDict:
+            self.file.setTag(tag, tagDict[tag])
             
-    def _save(self):
+    def save(self):
         self.file.save()
         
 if __name__ == "__main__":
