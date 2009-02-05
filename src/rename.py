@@ -94,7 +94,3 @@ class TagWriter:
             
     def save(self):
         self.file.save()
-        
-if __name__ == "__main__":
-    print "ok"
-    
