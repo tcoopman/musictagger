@@ -57,6 +57,7 @@ class MyMp3(TagFile):
     _title = "Title"
     
     def __init__(self, fname):
+        self.extension = "mp3"
         self.fname = fname
         self.file = MP3(fname, ID3=EasyID3)
         try:
