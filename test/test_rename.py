@@ -146,3 +146,18 @@ class TestTagWriter:
         assert self.tagArtist == wfile2.artist()
         assert self.tagAlbum == wfile2.album()
         
+class TestFileWriter:
+    def setup_method(self, method):
+        self.fw = FileWriter("","%artist/%album/%track - %title")
+        self.rfile1 = MyMp3("mp3/test1.mp3")
+        self.rfile2 = MyMp3("mp3/test2.mp3")
+        
+    def test__translateSchema1(self):
+        schema = self.fw._translateSchema(self.rfile1)
+        assert self.rfile1.artist() + "/" + self.rfile1.album() + "/" + self.rfile1.track() + " - " + self.rfile1.title() == schema
+        
+    def test__translateSchema2(self):
+        schema = self.fw._translateSchema(self.rfile2)
+        assert self.rfile2.artist() + "/" + self.rfile2.album() + "/" + self.rfile2.track() + " - " + self.rfile2.title() == schema
+        
+        
