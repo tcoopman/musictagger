@@ -13,14 +13,15 @@ TITLE = "Title"
 TRACK = "Track"
 
 class TagFile:
-    def __init__(self):
-        tags = {ARTIST:[self.artist, self.setArtist], ALBUM:[self.album, self.setAlbum], TRACK:[self.track, self.setTrack], TITLE:[self.title, self.setTitle]}
+        
+    def tags(self):
+        return {ARTIST:[self.artist, self.setArtist], ALBUM:[self.album, self.setAlbum], TRACK:[self.track, self.setTrack], TITLE:[self.title, self.setTitle]}
     
     def setTag(self, tag, value):
-        TagFile.tags[tag][1](value)
+        self.tags()[tag][1](value)
         
     def getTag(self, tag):
-        return TagFile.tags[tag][0]
+        return self.tags()[tag][0]
     
     def artist(self):
         pass
