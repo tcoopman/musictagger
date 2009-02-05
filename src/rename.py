@@ -51,12 +51,13 @@ class TagDictBuilder:
     DICT = {TRACK:tag.TRACK, TITLE:tag.TITLE, ALBUM:tag.TITLE, ARTIST:tag.ARTIST}
     
     def __init__(self, regex):
-        self.regex = regex
+        self.regex = self._buildRegex(regex)
         
     def build(self, line):
+        filtered = self.regex
         currentMatch = ""
         result = {}
-        for match in self.filtered:
+        for match in filtered:
             if match in TagDictBuilder.ITEMS:
                 currentMatch = match
             else:
@@ -64,7 +65,7 @@ class TagDictBuilder:
                 line = eaten[1]
                 if currentMatch != "":
                    result[TagDictBuilder[match]] = eaten[0] 
-            self.filtered = self.filtered[1:]
+            filtered = filtered[1:]
                 
             
     def _eat(self, line, token):
@@ -73,7 +74,7 @@ class TagDictBuilder:
         
     def _buildRegex(self, regex):
         splitted = TagDictBuilder.REGEX.split(regex)
-        self.filtered = [k for k in splitted if k != None]
+        return [k for k in splitted if k != None]
         
 
 class TagWriter:
