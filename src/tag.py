@@ -21,7 +21,7 @@ class TagFile:
         self.tags()[tag][1](value)
         
     def getTag(self, tag):
-        return self.tags()[tag][0]
+        return self.tags()[tag][0]()
     
     def artist(self):
         pass
@@ -57,6 +57,7 @@ class MyMp3(TagFile):
     _title = "Title"
     
     def __init__(self, fname):
+        self.fname = fname
         self.file = MP3(fname, ID3=EasyID3)
         try:
             self.file.add_tags(ID3=EasyID3)
