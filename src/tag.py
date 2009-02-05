@@ -64,7 +64,7 @@ class MyMp3(TagFile):
         
     def artist(self):
         try:
-            return self.file[MyMp3._artist]
+            return self.file[MyMp3._artist][0]
         except KeyError:
             return ""
         
@@ -73,7 +73,7 @@ class MyMp3(TagFile):
         
     def title(self):
         try:
-            return self.file[MyMp3._title]
+            return self.file[MyMp3._title][0]
         except KeyError:
             return ""
         
@@ -82,7 +82,7 @@ class MyMp3(TagFile):
     
     def album(self):
         try:
-            return self.file[MyMp3._album]
+            return self.file[MyMp3._album][0]
         except KeyError:
             return ""
         
@@ -91,7 +91,7 @@ class MyMp3(TagFile):
     
     def track(self):
         try:
-            return self.file[MyMp3._track]
+            return self.file[MyMp3._track][0]
         except KeyError:
             return 0
         
