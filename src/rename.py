@@ -3,6 +3,8 @@
 
 import glob
 import tag
+import re
+
 
 from tag import MyMp3
 
@@ -39,16 +41,14 @@ from tag import MyMp3
     
 #writeFiles(lines)
 
-class TagDictBuilder:
-    import re
-    
+class TagDictBuilder:    
     TRACK = "%track"
     TITLE = "%title"
     ALBUM = "%album"
     ARTIST = "%artist"
     ITEMS = [TRACK, TITLE, ALBUM, ARTIST]
-    REGEX = re.compile("(" + TRACK + ")(" + TITLE + ")(" + ALBUM + ")(" + ARTIST  + ")")
-    DICT = {TRACK:tag.TRACK, TITLE:tag.TITLE, ALBUM:tag.TITLE, ARTIST:tag.ARTIST}
+    REGEX = re.compile("(" + TRACK + ")|(" + TITLE + ")|(" + ALBUM + ")|(" + ARTIST  + ")")
+    DICT = {TRACK:tag.TRACK, TITLE:tag.TITLE, ALBUM:tag.ALBUM, ARTIST:tag.ARTIST}
     
     def __init__(self, regex):
         self.regex = self._buildRegex(regex)
@@ -61,15 +61,22 @@ class TagDictBuilder:
             if match in TagDictBuilder.ITEMS:
                 currentMatch = match
             else:
+                print line
+                print "eat: " + match
                 eaten = self._eat(line, match)
                 line = eaten[1]
                 if currentMatch != "":
-                   result[TagDictBuilder[match]] = eaten[0] 
+                    print currentMatch
+                    print eaten
+                    result[TagDictBuilder.DICT[currentMatch]] = eaten[0]
             filtered = filtered[1:]
+        return result
                 
             
     def _eat(self, line, token):
-        result = re.split(token,line,1)
+        token = re.escape(token)
+        result = re.split("(" + token + ")",line,1)
+        result = [k for k in result if k != ""]
         return [result[0], result[-1]]
         
     def _buildRegex(self, regex):
