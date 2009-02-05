@@ -97,37 +97,3 @@ class MyMp3(TagFile):
         
     def setTrack(self, track):
         self.file[MyMp3._track] = track
-    
-    
-if __name__ == "__main__":
-    test1 = MyMp3("test/test1.mp3")
-    test2 = MyMp3("test/test2.mp3")
-    test3 = MyMp3("test/wereldkinderen/Track02.mp3")
-    print "eerste"
-    print test1.track()
-    print test1.artist()
-    print test1.album()
-    print test1.title()
-    test1.setTitle("Testje2")
-    test1.setArtist("artist")
-    test1.setTrack("1")
-    test1.setAlbum("album")
-    print test1.title()
-    test1.save()
-    print "tweede"
-    print test2.track()
-    print test2.artist()
-    print test2.album()
-    print test2.title()
-    test2.save()
-    print "derde"
-    print test3.track()
-    print test3.artist()
-    print test3.album()
-    print test3.title()
-    test3.setTitle("Testje3")
-    test3.setArtist("artist")
-    test3.setTrack("1")
-    test3.setAlbum("album")
-    print test3.title()
-    test3.save()
