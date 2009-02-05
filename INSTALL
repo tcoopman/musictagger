@@ -1,0 +1,11 @@
+INSTALL
+
+needed things:
+mutagen (http://code.google.com/p/quodlibet/wiki/Development/Mutagen)
+
+opensuse:
+zypper in python-mutagen
+
+for tests:
+py.test (http://codespeak.net/py/dist/test.html)
+easy_install -U py
