@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 import sys
+import time
 sys.path.append("../src/")
 
 import tag
-from rename import TagDictBuilder
+from rename import *
 
 
 class TestTagDictBuilder:
@@ -95,3 +96,53 @@ class TestTagDictBuilder:
         assert result[tag.TITLE] == "title with spaces"
         assert result[tag.ALBUM] == "album"
         assert result[tag.ARTIST] == "artist"
+        
+        
+class TestTagWriter:
+    def setup_method(self, method):
+        self.wfile1path = "mp3/test3.mp3"
+        self.wfile2path = "mp3/test4.mp3"
+        self.wfile1 = MyMp3(self.wfile1path)
+        self.wfile2 = MyMp3(self.wfile2path)
+        self.tagTrack = str(time.time() + 0)
+        self.tagTitle = str(time.time() + 1)
+        self.tagAlbum = str(time.time() + 2)
+        self.tagArtist = str(time.time() + 3)
+        self.tagDict = {tag.TRACK:self.tagTrack, tag.TITLE:self.tagTitle, tag.ALBUM:self.tagAlbum, tag.ARTIST:self.tagArtist}
+        
+    def test_writeTags1(self):
+        tw = TagWriter(self.wfile1)
+        tw.writeTags(self.tagDict)
+        assert self.tagTrack == self.wfile1.track()
+        assert self.tagTitle == self.wfile1.title()
+        assert self.tagArtist == self.wfile1.artist()
+        assert self.tagAlbum == self.wfile1.album()
+        
+    def test_writeTags2(self):
+        tw = TagWriter(self.wfile2)
+        tw.writeTags(self.tagDict)
+        assert self.tagTrack == self.wfile2.track()
+        assert self.tagTitle == self.wfile2.title()
+        assert self.tagArtist == self.wfile2.artist()
+        assert self.tagAlbum == self.wfile2.album()
+        
+    def test_saveTags1(self):
+        tw = TagWriter(self.wfile1)
+        tw.writeTags(self.tagDict)
+        tw.save()
+        wfile1 = MyMp3(self.wfile1path)
+        assert self.tagTrack == wfile1.track()
+        assert self.tagTitle == wfile1.title()
+        assert self.tagArtist == wfile1.artist()
+        assert self.tagAlbum == wfile1.album()
+        
+    def test_saveTags2(self):
+        tw = TagWriter(self.wfile2)
+        tw.writeTags(self.tagDict)
+        tw.save()
+        wfile2 = MyMp3(self.wfile2path)
+        assert self.tagTrack == wfile2.track()
+        assert self.tagTitle == wfile2.title()
+        assert self.tagArtist == wfile2.artist()
+        assert self.tagAlbum == wfile2.album()
+        
