@@ -3,6 +3,9 @@ import sys
 import time
 sys.path.append("../src/")
 
+import os
+import py
+
 import tag
 from rename import *
 
@@ -148,7 +151,7 @@ class TestTagWriter:
         
 class TestFileWriter:
     def setup_method(self, method):
-        self.fw = FileWriter("","%artist/%album/%track - %title")
+        self.fw = FileWriter("","%artist/%album/%track - %title", None)
         self.rfile1 = MyMp3("mp3/test1.mp3")
         self.rfile2 = MyMp3("mp3/test2.mp3")
         
@@ -160,4 +163,45 @@ class TestFileWriter:
         schema = self.fw._translateSchema(self.rfile2)
         assert self.rfile2.artist() + "/" + self.rfile2.album() + "/" + self.rfile2.track() + " - " + self.rfile2.title() == schema
         
+class TestFileHandler:
+    
+    def setup_method(self, method):
+        self.fh = FileHandler()
+        
+    def test_copyFalse(self):
+        self.fh.copy("mp3/test3.mp3", "mp3/copy.mp3", False)
+        assert True == self.fh._exists("mp3/copy.mp3")
+        py.test.raises(IOError, "self.fh.copy('mp3/test3.mp3', 'mp3/copy.mp3', False)")
+        os.remove("mp3/copy.mp3")
+    
+    def test_copyTrue(self):
+        self.fh.copy("mp3/test3.mp3", "mp3/copy.mp3", True)
+        self.fh.copy("mp3/test3.mp3", "mp3/copy.mp3", True)
+        assert True == self.fh._exists("mp3/copy.mp3")
+        os.remove("mp3/copy.mp3")
+        
+    def test_moveFalse(self):
+        self.fh.copy("mp3/test3.mp3", "mp3/move.mp3", False)
+        self.fh.move("mp3/move.mp3", "mp3/newMove.mp3", False)
+        assert True == self.fh._exists("mp3/newMove.mp3")
+        assert False == self.fh._exists("mp3/move.mp3")
+        py.test.raises(IOError, "self.fh.move('mp3/newMove.mp3', 'mp3/newMove.mp3', False)")
+        os.remove("mp3/newMove.mp3")
+        
+    def test_moveTrue(self):
+        self.fh.copy("mp3/test3.mp3", "mp3/move.mp3", False)
+        self.fh.move("mp3/move.mp3", "mp3/newMove.mp3", True)
+        self.fh.move("mp3/newMove.mp3", "mp3/newMove.mp3", True)
+        assert True == self.fh._exists("mp3/newMove.mp3")
+        assert False == self.fh._exists("mp3/move.mp3")
+        os.remove("mp3/newMove.mp3")
+    
+    def move(self, src, dst, overwrite):
+        if overwrite == False and self._exists(path):
+            raise IOError(dst + ": exists")
+        shutil.move(src,dst)
+        
+    def test__exists(self):
+        assert True == self.fh._exists("mp3/test1.mp3")
+        assert False == self.fh._exists("noneexistingfile")
         
