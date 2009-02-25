@@ -33,31 +33,31 @@ class TagFile:
         return self.tags()[tag][0]()
     
     def artist(self):
-        self._read(ARTIST)
+        return self._read(ARTIST)
     
     def setArtist(self, artist):
         self._write(ARTIST, artist)
     
     def title(self):
-        self._read(TITLE)
+        return self._read(TITLE)
     
     def setTitle(self, title):
         self._write(TITLE, title)
     
     def album(self):
-        self._read(ALBUM)
+        return self._read(ALBUM)
     
     def setAlbum(self, album):
         self._write(ALBUM, album)
     
     def track(self):
-        self._read(TRACK)
+        return self._read(TRACK)
     
     def setTrack(self, track):
         self._write(TRACK, track)
     
     def disc(self):
-        self._read(DISC)
+        return self._read(DISC)
     
     def setDisc(self, disc):
         self._write(DISC, disc)
