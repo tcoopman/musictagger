@@ -5,7 +5,7 @@ from mutagen.mp3 import MP3
 from mutagen.easyid3 import EasyID3
 
 from mutagen.flac import FLAC
-
+from mutagen.id3 import ID3, TIT2, TPE1, TALB, TRCK, TPOS
 
 import mutagen.id3
 
@@ -24,7 +24,7 @@ KNOWN_TAGS = [ARTIST, ALBUM, TITLE, TRACK, YEAR, DISC]
 class TagFile:
         
     def tags(self):
-        return {ARTIST:[self.artist, self.setArtist], ALBUM:[self.album, self.setAlbum], TRACK:[self.track, self.setTrack], TITLE:[self.title, self.setTitle]}
+        return {ARTIST:[self.artist, self.setArtist], ALBUM:[self.album, self.setAlbum], TRACK:[self.track, self.setTrack], TITLE:[self.title, self.setTitle], DISC:[self.disc, self.setDisc]}
     
     def setTag(self, tag, value):
         self.tags()[tag][1](value)
@@ -33,82 +33,56 @@ class TagFile:
         return self.tags()[tag][0]()
     
     def artist(self):
-        pass
+        self._read(ARTIST)
     
     def setArtist(self, artist):
-        pass
+        self._write(ARTIST, artist)
     
     def title(self):
-        pass
+        self._read(TITLE)
     
     def setTitle(self, title):
-        pass
+        self._write(TITLE, title)
     
     def album(self):
-        pass
+        self._read(ALBUM)
     
     def setAlbum(self, album):
-        pass
+        self._write(ALBUM, album)
     
     def track(self):
-        pass
+        self._read(TRACK)
     
     def setTrack(self, track):
-        pass
+        self._write(TRACK, track)
+    
+    def disc(self):
+        self._read(DISC)
+    
+    def setDisc(self, disc):
+        self._write(DISC, disc)
     
     def save(self):
         self.file.save()
 
-class MyMp3(TagFile):
-    _artist = "Artist"
-    _album = "Album"
-    _track = "tracknumber"
-    _title = "Title"
+        
+class MyMp3(TagFile):    
+    writeDict = {ARTIST:TPE1, ALBUM:TALB, TRACK:TRCK, TITLE:TIT2, DISC:TPOS}
+    readDict = {ARTIST:"TPE1", ALBUM:"TALB", TRACK:"TRCK", TITLE:"TIT2", DISC:"TPOS"}
     
     def __init__(self, fname):
         self.extension = "mp3"
         self.fname = fname
-        self.file = MP3(fname, ID3=EasyID3)
-        try:
-            self.file.add_tags(ID3=EasyID3)
-        except mutagen.id3.error:
-            pass
+        self.file = ID3(fname)
         
-    def artist(self):
+    def _read(self, tag):
         try:
-            return self.file[MyMp3._artist][0]
-        except KeyError:
+            return self.file.get(MyMp3.readDict[tag]).text[0]
+        except AttributeError:
             return ""
-        
-    def setArtist(self, artist):
-        self.file[MyMp3._artist] = artist
-        
-    def title(self):
-        try:
-            return self.file[MyMp3._title][0]
-        except KeyError:
-            return ""
-        
-    def setTitle(self, title):
-        self.file[MyMp3._title] = title
-    
-    def album(self):
-        try:
-            return self.file[MyMp3._album][0]
-        except KeyError:
-            return ""
-        
-    def setAlbum(self, album):
-        self.file[MyMp3._album] = album
-    
-    def track(self):
-        try:
-            return self.file[MyMp3._track][0]
-        except KeyError:
-            return 0
-        
-    def setTrack(self, track):
-        self.file[MyMp3._track] = track
+            
+    def _write(self, tag, value):
+        self.file.add(MyMp3.writeDict[tag](encoding=0, text=unicode(value)))
         
         
 class MyFlac(TagFile):
