@@ -142,7 +142,7 @@ class FileWriter:
 class FileHandler:
     def copy(self, src, dst, overwrite):
         if overwrite == False and self._exists(dst):
-            raise IOError(dst + ": exists")
+            print dst + ": exists"
         self.ensure_dir(dst)
         shutil.copy2(src,dst)
     
