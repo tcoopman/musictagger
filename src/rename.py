@@ -78,7 +78,7 @@ class TagDictBuilder:
                 if currentMatch != "":
                     print currentMatch
                     print eaten
-                    result[TAGDICT[currentMatch]] = eaten[0]
+                    result[TAGDICT[currentMatch]] = eaten[0].strip()
             filtered = filtered[1:]
         return TagDict(result)
                 
@@ -119,10 +119,7 @@ class FileWriter:
         dst = self._getDestination()
         self.fh.move(src,dst,overwrite)
     
-    def copy(self, file):
-        self.copy(file,False)
-    
-    def copy(self, file, overwrite):
+    def copy(self, file, overwrite=False):
         src = self._getSource(file)
         dst = self._getDestination(file)
         self.fh.copy(src,dst, overwrite)
@@ -136,6 +133,9 @@ class FileWriter:
     def _translateSchema(self, file):
         location = self.schema
         for tag in TAGDICT:
+            print tag
+            print TAGDICT[tag]
+            print file.getTag(TAGDICT[tag])
             location = location.replace(tag, file.getTag(TAGDICT[tag]))
         return location
             
@@ -143,15 +143,23 @@ class FileHandler:
     def copy(self, src, dst, overwrite):
         if overwrite == False and self._exists(dst):
             raise IOError(dst + ": exists")
+        self.ensure_dir(dst)
         shutil.copy2(src,dst)
     
     def move(self, src, dst, overwrite):
         if overwrite == False and self._exists(dst):
             raise IOError(dst + ": exists")
+        self.ensure_dir(dst)
         shutil.move(src,dst)
         
     def _exists(self, path):
         return os.path.exists(path)
+        
+    def ensure_dir(self,f):
+        d = os.path.dirname(f)
+        if not os.path.exists(d):
+            os.makedirs(d)
+
         
 class BatchRename:
     def __init__(self, tagDicts, musicFiles):
