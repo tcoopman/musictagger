@@ -4,13 +4,22 @@
 from mutagen.mp3 import MP3
 from mutagen.easyid3 import EasyID3
 
+from mutagen.flac import FLAC
+
+
 import mutagen.id3
 
+#FIXME add year, disc, comment,..
+#FIXME add flac, oggvorbis, oggflac,...
+#FIXME add TagFileBuilder
 
 ARTIST = "Artist"
 ALBUM = "Album"
 TITLE = "Title"
 TRACK = "Track"
+YEAR = "Year"
+DISC = "Disc"
+KNOWN_TAGS = [ARTIST, ALBUM, TITLE, TRACK, YEAR, DISC]
 
 class TagFile:
         
@@ -100,3 +109,10 @@ class MyMp3(TagFile):
         
     def setTrack(self, track):
         self.file[MyMp3._track] = track
+        
+        
+class MyFlac(TagFile):
+    def __init__(self, fname):
+        self.extension = "flac"
+        self.fname = fname
+        self.file = FLAC(fname)

@@ -8,49 +8,57 @@ import shutil
 import os
 
 from tag import MyMp3
-
-#musicFolder = "test/wereldkinderen"
-#tagFile = "test/test_tags"
-
-#lines = open(tagFile, "r").readlines()
-
-#files = glob.glob(musicFolder + "/*.mp3")
-
-#def writeFiles(lines):
-    #for i in range(0, len(lines)):
-        #file = readFile(i)
-        #writeFile(file, makeDict(lines[i]))
-
-#def readFile(number):
-    #return MyMp3(files[number])
-    
-#def makeDict(line):
-    #splitted = line.strip().split("-")
-    #result = {}
-    #result["Track"] = splitted[0]
-    #result["Album"] = splitted[1]
-    #result["Artist"] = splitted[2]
-    #result["Title"] = splitted[3]
-    #return result
-    
-#def writeFile(file, tags):
-    #file.setTrack(tags["Track"])
-    #file.setTitle(tags["Title"])
-    #file.setAlbum(tags["Album"])
-    #file.setArtist(tags["Artist"])
-    #file.save()
-    
-#writeFiles(lines)
+from tag import KNOWN_TAGS
 
 TRACK = "%track"
 TITLE = "%title"
 ALBUM = "%album"
+DISC = "%disc"
 ARTIST = "%artist"
-TAGDICT = {TRACK:tag.TRACK, TITLE:tag.TITLE, ALBUM:tag.ALBUM, ARTIST:tag.ARTIST}
+TAGDICT = {TRACK:tag.TRACK, TITLE:tag.TITLE, ALBUM:tag.ALBUM, ARTIST:tag.ARTIST, DISC:tag.DISC}
+
+class TagDict:
+    def __init__(self, dict):
+        self.dict = dict
+        
+    def keys(self): return self.dict.keys() 
+    def items(self): return self.dict.items()  
+    def values(self): return self.dict.values()
+
+        
+    def __getitem__(self,key):
+        return self.dict[key]
+        
+    def __setitem__(self, key, item):
+        if key not in KNOWN_TAGS:
+            raise KeyError
+        else:
+            self.dict[key] = item
+            
+    def __contains__(self, key):
+        return self.dict.__contains__(key)
+        
+    def __iter__(self):
+        return self.dict.__iter__()
+        
+    def setAlbum(self, album):
+        self[TAGDICT[ALBUM]] = album
+        
+    def setTitle(self, title):
+        self[TAGDICT[TITLE]] = title
+    
+    def setTrack(self, track):
+        self[TAGDICT[TRACK]] = track
+    
+    def setDisc(self, disc):
+        self[TAGDICT[DISC]] = disc
+        
+    def setArtist(self, artist):
+        self[TAGDICT[ARTIST]] = artist
 
 class TagDictBuilder:    
     ITEMS = [TRACK, TITLE, ALBUM, ARTIST]
-    REGEX = re.compile("(" + TRACK + ")|(" + TITLE + ")|(" + ALBUM + ")|(" + ARTIST  + ")")
+    REGEX = re.compile("(" + TRACK + ")|(" + TITLE + ")|(" + ALBUM + ")|(" + ARTIST  + ")|(" + DISC + ")")
     
     def __init__(self, regex):
         self.regex = self._buildRegex(regex)
@@ -72,7 +80,7 @@ class TagDictBuilder:
                     print eaten
                     result[TAGDICT[currentMatch]] = eaten[0]
             filtered = filtered[1:]
-        return result
+        return TagDict(result)
                 
             
     def _eat(self, line, token):
@@ -144,3 +152,14 @@ class FileHandler:
         
     def _exists(self, path):
         return os.path.exists(path)
+        
+class BatchRename:
+    def __init__(self, tagDicts, musicFiles):
+        self.tagDicts = tagDicts
+        self.musicFiles = musicFiles
+        
+    def tagAll(self):
+        for (file,tagDict) in zip(self.musicFiles,self.tagDicts):
+            tw = TagWriter(file)
+            tw.writeTags(tagDict)
+            tw.save()
